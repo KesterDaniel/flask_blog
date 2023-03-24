@@ -11,6 +11,17 @@ def home():
         blog_data = json.load(blog_file)
     return render_template("index.html", blog_posts=blog_data)
 
+
+@app.route('/about')
+def about():
+    return render_template("about.html")
+
+
+@app.route('/contact')
+def contact():
+    return render_template("contact.html")
+
+
 @app.route("/readblog/<int:b_id>")
 def read_blog(b_id):
     with open("blog-data.json") as blog_file:
