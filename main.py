@@ -1,9 +1,29 @@
+from flask import Flask, render_template, request
 import json
+import os
+import smtplib
+import ssl
+from dotenv import load_dotenv
 
-from flask import Flask, render_template
-
+load_dotenv()
 
 app = Flask(__name__)
+
+context = ssl.create_default_context()
+MY_EMAIL = "kesterdaniel401@gmail.com"
+MY_PASSWORD = os.getenv("MY_PASSWORD")
+
+
+# send mail function
+def send_mail(sender, message):
+    with smtplib.SMTP_SSL("smtp.gmail.com", port=465, context=context) as connection:
+        connection.login(user=MY_EMAIL, password=MY_PASSWORD)
+        connection.sendmail(
+            from_addr=sender,
+            to_addrs=MY_EMAIL,
+            msg=f"Subject:HAPPY BIRTHDAY!!\n\n{message}"
+        )
+
 
 @app.route('/')
 def home():
@@ -17,9 +37,19 @@ def about():
     return render_template("about.html")
 
 
-@app.route('/contact')
+@app.route('/contact', methods=["GET", "POST"])
 def contact():
-    return render_template("contact.html")
+    email_sent = False
+    if request.method == "GET":
+        return render_template("contact.html", email_sent=email_sent)
+    else:
+        name = request.form['name']
+        email = request.form['email']
+        phone_number = request.form['phone']
+        message = request.form['message']
+        email_sent = True
+
+        return render_template("contact.html", email_sent=email_sent)
 
 
 @app.route("/readblog/<int:b_id>")
