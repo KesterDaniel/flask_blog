@@ -15,13 +15,14 @@ MY_PASSWORD = os.getenv("MY_PASSWORD")
 
 
 # send mail function
-def send_mail(sender, message):
+def send_mail(name, email, phone, email_to_send):
+    email_message = f"Subject:New Message\n\nName: {name}\nEmail: {email}\nPhone: {phone}\nMessage:{email_to_send}"
     with smtplib.SMTP_SSL("smtp.gmail.com", port=465, context=context) as connection:
         connection.login(user=MY_EMAIL, password=MY_PASSWORD)
         connection.sendmail(
-            from_addr=sender,
-            to_addrs=MY_EMAIL,
-            msg=f"Subject:HAPPY BIRTHDAY!!\n\n{message}"
+            from_addr=MY_EMAIL,
+            to_addrs="kesterdan17@gmail.com",
+            msg=email_message
         )
 
 
@@ -47,6 +48,7 @@ def contact():
         email = request.form['email']
         phone_number = request.form['phone']
         message = request.form['message']
+        send_mail(name, email, phone_number, message)
         email_sent = True
 
         return render_template("contact.html", email_sent=email_sent)
